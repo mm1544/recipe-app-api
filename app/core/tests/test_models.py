@@ -2,7 +2,8 @@
 Tests for models.
 """
 from django.test import TestCase
-# 'get_user_model' -> to get reference to the default User model from the project.
+# 'get_user_model' -> to get reference to the default \
+# User model from the project.
 from django.contrib.auth import get_user_model
 
 
