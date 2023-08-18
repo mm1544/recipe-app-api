@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Added custom apps 12/08/23
+    # Added custom 12/08/23
     'core',
 ]
 
@@ -129,3 +129,8 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Setting AUTH_USER_MODEL configuration, and we telling to use 'core.User' (??).\
+# Meaning: out of all models defined in core app, chose the User model and use \
+# it for custom User model.
+AUTH_USER_MODEL = 'core.User'
