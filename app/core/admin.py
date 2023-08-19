@@ -17,6 +17,10 @@ class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
     ordering = ['id']
     list_display = ['email', 'name']
+    # !!!!
+    # Need to make customization to UserAdmin so that it supports \
+    # all of the fields on our custom user model instead of the \
+    # fields defined in BaseUserAdmin class
     fieldsets = (
         # 'None' -> Title section is missing
         (None, {'fields': ('email', 'password')}),
@@ -33,7 +37,24 @@ class UserAdmin(BaseUserAdmin):
         ),
         (_('Important dates'), {'fields': ('last_login',)}),
     )
+    # Will make 'last_login' field readonly
     readonly_fields = ['last_login']
+
+    add_fieldsets = (
+        (None, {
+            # For better visual look
+            'classes': ('wide',),
+            'fields': (
+                'email',
+                'password1',
+                'password2',
+                'name',
+                'is_active',
+                'is_staff',
+                'is_superuser',
+            )
+        }),
+    )
 
 
 # If you not specify UserAdmin, then Dj will use a \
