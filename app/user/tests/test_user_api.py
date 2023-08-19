@@ -14,6 +14,7 @@ from rest_framework import status
 # 'user' as an app and 'create' as an endpoint
 # Will return a full URL path inside our project.
 CREATE_USER_URL = reverse('user:create')
+TOKEN_URL = reverse('user:token')
 
 # Helper f-n that will create the user for testing.
 
@@ -85,3 +86,43 @@ class PublicUserApiTests(TestCase):
             email=payload['email']
         ).exists()
         self.assertFalse(user_exists)
+
+    def test_create_token_for_user(self):
+        """Test generates token for valid credentials."""
+        user_details = {
+            'name': 'Test Name',
+            'email': 'test@example.com',
+            'password': 'test-user-password123',
+        }
+        create_user(**user_details)
+        # 'payload' will be sent to token API to login.
+        payload = {
+            'email': user_details['email'],
+            'password': user_details['password'],
+        }
+        res = self.client.post(TOKEN_URL, payload)
+
+        # Tests if 'token' is IN res.data dictionary
+        self.assertIn('token', res.data)
+        # Tests if responce code is 200
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_create_token_bad_credentials(self):
+        """Test returns error if credentials invalid."""
+        create_user(email='test@example.com', password='goodpass')
+
+        # Mismatch width video
+        # payload = {'email': 'password': 'badpass'}
+        payload = {'email': '', 'password': 'badpass'}
+        res = self.client.post(TOKEN_URL, payload)
+
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_token_blank_password(self):
+        """Test posting a blank password returns an error."""
+        payload = {'email': 'test@example.com', 'password': ''}
+        res = self.client.post(TOKEN_URL, payload)
+
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
