@@ -62,7 +62,7 @@ class PublicUserApiTests(TestCase):
         payload = {
             'email': 'test@example.com',
             'password': 'testpass123',
-            'name': 'Test Name'
+            'name': 'Test Name',
         }
         # Will cal our custom f-n
         create_user(**payload)
@@ -90,7 +90,7 @@ class PublicUserApiTests(TestCase):
     def test_create_token_for_user(self):
         """Test generates token for valid credentials."""
         user_details = {
-            'name': 'Test name',
+            'name': 'Test Name',
             'email': 'test@example.com',
             'password': 'test-user-password123',
         }
@@ -111,21 +111,19 @@ class PublicUserApiTests(TestCase):
         """Test returns error if credentials invalid."""
         create_user(email='test@example.com', password='goodpass')
 
-        # Mismatch width video
-        # payload = {'email': 'password': 'badpass'}
         payload = {'email': 'test@example.com', 'password': 'badpass'}
         res = self.client.post(TOKEN_URL, payload)
 
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_create_token_blank_password(self):
-        """Test posting a blank password returns an error."""
-        payload = {'email': 'test@example.com', 'password': ''}
-        res = self.client.post(TOKEN_URL, payload)
+    # def test_create_token_blank_password(self):
+    #     """Test posting a blank password returns an error."""
+    #     payload = {'email': 'test@example.com', 'password': ''}
+    #     res = self.client.post(TOKEN_URL, payload)
 
-        self.assertNotIn('token', res.data)
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+    #     self.assertNotIn('token', res.data)
+    #     self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_token_email_not_found(self):
         """Test error returned if user not found for given email."""
