@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Added custom 12/08/23
     'core',
     'rest_framework',
+    # Authentication tokens support for Dj REST Framework
     'rest_framework.authtoken',
     'drf_spectacular',
     'user',
