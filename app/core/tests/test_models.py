@@ -1,10 +1,15 @@
 """
 Tests for models.
 """
+# To store one of the values of Recipe object
+from decimal import Decimal
+
 from django.test import TestCase
 # 'get_user_model' -> to get reference to the default \
 # User model from the project.
 from django.contrib.auth import get_user_model
+
+from core import models
 
 
 class ModelTests(TestCase):
@@ -53,3 +58,24 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_create_recipe(self):
+        """Test creating a recipe is successful."""
+        # User that will be assigned to the recipe object.
+        user = get_user_model().objects.create_user(
+            'test@example.com',
+            'testpass123',
+        )
+        recipe = models.Recipe.objects.create(
+            # Authenticated user
+            user=user,
+            title='Sample recipe name',
+            # Estimated time to make the recipe
+            time_minutes=5,
+            price=Decimal('5.50'),
+            description='Sample recipe description.',
+        )
+
+        # We will add a logic that returns a Title, wen you \
+        # require a string representation of a 'recipe'
+        self.assertEqual(str(recipe), recipe.title)

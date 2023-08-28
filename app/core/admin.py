@@ -62,3 +62,4 @@ class UserAdmin(BaseUserAdmin):
 # and it would not apply the changes that we have applied \
 # in our custom UserAdmin class.
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Recipe)

@@ -1,7 +1,7 @@
 """
 Database models.
 """
-
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -43,3 +43,28 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+
+class Recipe(models.Model):
+    """Recipe object."""
+    # 'AUTH_USER_MODEL' we define in settings.py \
+    # We do that so that in every model we use/reference \
+    # to the same User Model.
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        # If related onj is deleted, we are going to \
+        # cascade this change to this model. So if we \
+        # have a user with a multiple recipies, and that \
+        # user removes its profile, then it is going to \
+        # delete all(!) the Recipes asociated to the user.
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    time_minutes = models.IntegerField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    link = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        # It defines how object should be displayed in Dj Admin.
+        return self.title
