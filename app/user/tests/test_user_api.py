@@ -10,18 +10,19 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
+### Setting URLs that we are going to test ###
 # API url that we will be testing
-# 'user' as an app and 'create' as an endpoint
+# 'user' as an app and 'create' is an endpoint
 # Will return a full URL path inside our project.
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:me')
 
-# Helper f-n that will create the user for testing.
-
 
 def create_user(**params):
     """Create and return a new user."""
+
+    # Helper f-n that will create the user for testing.
     return get_user_model().objects.create_user(**params)
 
 
@@ -138,3 +139,68 @@ class PublicUserApiTests(TestCase):
         """Test authentication is required for users."""
         # Checking that authentication is required and enforced \
         # for ME_URL endpoint.
+        res = self.client.get(ME_URL)
+
+        # Here we make unauthenticated http request to 'me' endpoint.
+        # You are not Authorised to use endpoint if you are not authenticated (!!)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+# Tests are split into 2 different classes:
+# 1) Public test (unauthenticated test to the endpoint) \
+# 2) Private private test (authenticated) to the endpoint.
+
+# 2) Authenticated User testing
+class PrivateUserApiTests(TestCase):
+    """Test API requests that require authentication."""
+
+    def setUp(self):
+        self.user = create_user(
+            email='test@example.com',
+            password='testpass123',
+            name='Test Name',
+        )
+        #  API testing client provided by REST framework
+        self.client = APIClient()
+        #  It forces authentication to the specific user. \
+        # It is usefull because we don't have to do 'real' \
+        # authentication.
+        self.client.force_authenticate(user=self.user)
+
+    def test_retrieve_profile_success(self):
+        """Test retrieving profile for logged in user."""
+        # Request should retrieve data from the current authenticated user.
+        res = self.client.get(ME_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, {
+            'name': self.user.name,
+            'email': self.user.email,
+        })
+
+    def test_post_me_not_allowed(self):
+        """Test POST is not allowed for the 'me' endpoint."""
+
+        # Testing that POST method is disabled for 'me' endpoint. \
+        # HTTP POST should only(!) be used when you are creating objects \
+        # in the system(!). Since this endpoint(!) isn't designed to \
+        # create Objects(!), that is what 'create_user' API is for, \
+        # this API should disable the POST method for this endpoint.
+        res = self.client.post(ME_URL, {})
+
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_update_user_profile(self):
+        """Test updating the user profile for the authenticated user."""
+        payload = {'name': 'Updated name', 'password': 'newpassword123'}
+
+        res = self.client.patch(ME_URL, payload)
+
+        # Refreshing User values on DB. By default they are not \
+        # refreshed automatically. They are loaded when you first \
+        # creating the user and then you need to call 'refresh_from_db' \
+        # method to update that object.
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.name, payload['name'])
+        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
