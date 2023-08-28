@@ -15,6 +15,7 @@ from rest_framework import status
 # Will return a full URL path inside our project.
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
+ME_URL = reverse('user:me')
 
 # Helper f-n that will create the user for testing.
 
@@ -132,3 +133,8 @@ class PublicUserApiTests(TestCase):
 
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_user_unauthorised(self):
+        """Test authentication is required for users."""
+        # Checking that authentication is required and enforced \
+        # for ME_URL endpoint.
