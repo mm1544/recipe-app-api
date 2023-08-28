@@ -21,6 +21,8 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object."""
 
+    # Will reuse UserSerializer for both - creating users and updating users.
+
     # Telling to Dj REST framework the model and fields, \
     # and additional arguments that we want to pass \
     # to Serializer. Serializer needs to know which \
@@ -41,6 +43,28 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create and return a user with encrypted password."""
         return get_user_model().objects.create_user(**validated_data)
+
+    # Overwriting update method on UserSerializer
+    # 'instance' is the model instance that is being updated.
+    # 'validated_data' data that was already passed through \
+    # serializer validation (in this case 'email', 'password' and 'name').
+    def update(self, instance, validated_data):
+        """Update and return user."""
+        # Setting default value to None.
+        # We don't wan't to add password in raw form, \
+        # first we want to hash it. Removing password from \
+        # the dictionary. Password update is optional therefore \
+        # we provide default to 'None'. So if user doesn't provide \
+        # the password, it will default to Null(?) value.
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        # Need to return it to be used by View, if required.
+        return user
 
 
 class AuthTokenSerializer(serializers.Serializer):
