@@ -18,7 +18,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     # 'id' and it will have an ability to pergorm a multiple \
     # different methods.
 
-    serializer_class = serializers.RecipeSerializer
+    serializer_class = serializers.RecipeDetailSerializer
     # 'queryset' represents the objects that are available for \
     # this viewset. Because it is a model viewset, it is expected \
     # to work with a model, and when you tell which models to use, \
@@ -39,3 +39,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # retrieve 'user' obj from 'request' that is passed in by \
         # the authentication system.
         return self.queryset.filter(user=self.request.user).order_by('-id')
+
+    # Overwriting method
+
+    def get_serializer_class(self):
+        """REturn the serializer class for request."""
+        if self.action == 'list':
+            # If we are calling 'list' endpoint, which \
+            # is HTTP GET to the Root of a API, it will 'come-up' as \
+            # the action 'list'(??). It will return serializer for \
+            # the list view (find-of preview serializer). Othervise \
+            # it will return 'serializer_class'
+            # NOT adding here '()' because we want to return a reference \
+            # to the class, but not the obj of a class.
+            return serializers.RecipeSerializer
+
+        return self.serializer_class

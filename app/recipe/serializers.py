@@ -19,3 +19,15 @@ class RecipeSerializer(serializers.ModelSerializer):
         # Because we don't want user to be able to change DB \
         # id of a recipe.
         read_only_fileds = ['id']
+
+
+class RecipeDetailSerializer(RecipeSerializer):
+    """Serializer for recipe detail view."""
+    # We are extending class RecipeSerializer. We will add few \
+    # extra fields.
+
+    class Meta(RecipeSerializer.Meta):
+        # Using Meta class inside of class RecipeSerializer
+
+        # Adding additional field
+        fields = RecipeSerializer.Meta.fields + ['description']
