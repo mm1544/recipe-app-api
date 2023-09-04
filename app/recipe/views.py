@@ -55,3 +55,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return serializers.RecipeSerializer
 
         return self.serializer_class
+
+    def perform_create(self, serializer):
+        """Create a new recipr."""
+        # Overwriting the behaviour for when DJ framework saves the model \
+        # in the viewset.
+        # Meaning of this method: When we perform creation of a new object \
+        # through this model viewset(?), so when we create a new recipe, \
+        # through 'create_feature'(?) of the viewset, then we will call \
+        # method 'perform_create' as part of that model creation. \
+        # It accept 'serializer' and it should be a walidated serializer.
+        # And will set 'user' to the current authenticated user, when we \
+        # save the object.
+        serializer.save(user=self.request.user)
