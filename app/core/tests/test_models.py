@@ -12,6 +12,11 @@ from django.contrib.auth import get_user_model
 from core import models
 
 
+def create_user(email='user@example.com', password='testpass123'):
+    """Create and returna new user."""
+    return get_user_model().objects.create_user(email, password)
+
+
 class ModelTests(TestCase):
     """Test models."""
 
@@ -79,3 +84,14 @@ class ModelTests(TestCase):
         # We will add a logic that returns a Title, wen you \
         # require a string representation of a 'recipe'
         self.assertEqual(str(recipe), recipe.title)
+
+    def test_create_tag(self):
+        """Test creating a tag is successful."""
+        user = create_user()
+        # Creating new Tag instance with assigned user.
+        tag = models.Tag.objects.create(user=user, name='Tag1')
+
+        # Testing 2 things:
+        # 1)Checking corect string representation setup for the model instances.
+        # 2)If we can create new Tag instances.
+        self.assertEqual(str(tag), tag.name)

@@ -64,7 +64,25 @@ class Recipe(models.Model):
     time_minutes = models.IntegerField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
+    # 'ManyToManyField' - because we can have many diferent \
+    # recipes that can have many diferent tags.
+    tag = models.ManyToManyField('Tag')
 
     def __str__(self):
         # It defines how object should be displayed in Dj Admin.
         return self.title
+
+
+class Tag(models.Model):
+    """Tag for filtering recipes."""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        # Meaning: If the user is deleted, then Tag will be \
+        # deleted as well.
+        on_delete=models.CASCADE,
+    )
+
+    # Defining string representation of the Tag
+    def __str__(self):
+        return self.name
