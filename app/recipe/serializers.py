@@ -1,6 +1,12 @@
 """
 Serialoizers for recipe APIs.
 """
+# SERIALIZERS: Is the way to convert objects to and \
+# from Python objects. It takes in a JSON imput, \
+# validates the input (to make sure that it is \
+# secure and correct), and then it converts it \
+# to either a Python object OR to a model in \
+# our Database(!!!)
 
 from rest_framework import serializers
 
