@@ -2,13 +2,22 @@
 Views for the recipie APIs.
 """
 
-from rest_framework import viewsets
+from rest_framework import (
+    viewsets,
+    # Thing which can be mixed in into view to add \
+    # aditional functionality.
+    mixins,
+)
+
 from rest_framework.authentication import TokenAuthentication
 # That is the permission that we want to check before users \
 # can use recipe endpoint.
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Recipe
+from core.models import (
+    Recipe,
+    Tag,
+)
 from recipe import serializers
 
 
@@ -68,3 +77,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # And will set 'user' to the current authenticated user, when we \
         # save the object.
         serializer.save(user=self.request.user)
+
+
+class TagViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    # 'ListModelMixin' allows adding listing functionality \
+    # for listing models.
+    # 'viewsets' allows to use CRUD functionality out of the box.
+    # 'GenericViewSet' allows throwing mixsins, so that you can have a mixin functionality that you desire for your particular API.
+    """Manage tags in the database."""
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    # Need to overwrite get_queryset method (coms with viewset), \
+    # to make sure it returns only the queryset objects for \
+    # the authenticated users. By default it would return ALL \
+    # the diferent tags that exist in the database. We want to \
+    # filter them to the user that created them.
+    def get_queryset(self):
+        """Filter queryset to authenticated user."""
+        return self.queryset.filter(user=self.request.user).order_by('-name')
