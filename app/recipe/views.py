@@ -79,7 +79,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class TagViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class TagViewSet(mixins.UpdateModelMixin,
+                 mixins.ListModelMixin,
+                 viewsets.GenericViewSet):
     # 'ListModelMixin' allows adding listing functionality \
     # for listing models.
     # 'viewsets' allows to use CRUD functionality out of the box.
