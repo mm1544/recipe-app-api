@@ -46,6 +46,24 @@ class RecipeSerializer(serializers.ModelSerializer):
         # id of a recipe.
         read_only_fileds = ['id']
 
+    def _get_or_create_tags(self, tags, recipe):
+        """Handle getting or creating tags as needed."""
+        # Because we are doing it in serializer and not the view, we \
+        # need to use self.context. The context is passed TO the \
+        # serializer BY the view, when you are using serializer for \
+        # that particular view.
+        auth_user = self.context['request'].user
+
+        # Looping through all the tags that we have pop'ed from \
+        # validated_data
+        for tag in tags:
+            tag_obj, created = Tag.objects.get_or_create(
+                user=auth_user,
+                # We want to take all the values that are passed-in to the tag.
+                **tag,
+            )
+            recipe.tags.add(tag_obj)
+
     # Overwriting 'create' method
     def create(self, validated_data):
         """Create a recipe."""
@@ -58,24 +76,35 @@ class RecipeSerializer(serializers.ModelSerializer):
         # Tags are expected to be created separately and added as a \
         # relationship to Recipe from many2many field (on Recipe)
         recipe = Recipe.objects.create(**validated_data)
-        # Because we are doing it in serializer and not the view, we \
-        # need to use self.context. The context is passed TO the \
-        # serializer BY the view, when you are using serializer for \
-        # that particular view.
-        auth_user = self.context['request'].user
-        # Looping through all the tags that we have pop'ed from \
-        # validated_data
-        for tag in tags:
-            tag_obj, created = Tag.objects.get_or_create(
-                user=auth_user,
-                # We want to take all the values that are passed-in to the tag.
-                **tag,
-            )
-            recipe.tags.add(tag_obj)
+
+        self._get_or_create_tags(tags, recipe)
 
         # Need to return the value from 'create' f-n in order for the \
         # rest of funtionality to work.
         return recipe
+
+    def update(self, instance, validated_data):
+        """Update recipe."""
+        # 'instance' is an existing instance, that we are updating.
+        # 'validated_data' is data that we want 'instance' to be updated with.
+
+        tags = validated_data.pop('tags', None)
+
+        if tags is not None:
+            # Clears all the existing assigned tags, because we are updating \
+            # tags with passed-in tags from 'validated_data'
+            instance.tags.clear()
+            self._get_or_create_tags(tags, instance)
+            # If tags are not provided in 'validated_data', then there is no \
+            # need to update them on instance.
+
+        for attr, value in validated_data.items():
+            # For the rest of the 'validated_data'. Everything will be assigned \
+            # to the instance.
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
 
 
 class RecipeDetailSerializer(RecipeSerializer):
