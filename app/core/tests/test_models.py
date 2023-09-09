@@ -95,3 +95,13 @@ class ModelTests(TestCase):
         # 1)Checking corect string representation setup for the model instances.
         # 2)If we can create new Tag instances.
         self.assertEqual(str(tag), tag.name)
+
+    def test_create_ingredient(self):
+        """Test creating an ingredient is successful."""
+        user = create_user()
+        ingredient = models.Ingredient.objects.create(
+            user=user,
+            name='Ingredient1',
+        )
+
+        self.assertEqual(str(ingredient), ingredient.name)

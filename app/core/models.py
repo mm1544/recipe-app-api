@@ -67,6 +67,7 @@ class Recipe(models.Model):
     # 'ManyToManyField' - because we can have many diferent \
     # recipes that can have many diferent tags.
     tags = models.ManyToManyField('Tag')
+    ingredients = models.ManyToManyField('Ingredient')
 
     def __str__(self):
         # It defines how object should be displayed in Dj Admin.
@@ -85,4 +86,17 @@ class Tag(models.Model):
 
     # Defining string representation of the Tag
     def __str__(self):
+        return self.name
+
+
+class Ingredient(models.Model):
+    """Ingredient for recipies."""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        # String representation
         return self.name
