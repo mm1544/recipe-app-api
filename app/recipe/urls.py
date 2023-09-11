@@ -24,6 +24,7 @@ router = DefaultRouter()
 # (HTTP requests).
 router.register('recipes', views.RecipeViewSet)
 router.register('tags', views.TagViewSet)
+router.register('ingredients', views.IngredientViewSet)
 
 # Name that is used to identify when we are doing 'reverse' look-up of URLs.
 app_name = 'recipe'
