@@ -6,7 +6,7 @@ Test Django management commands.
 from unittest.mock import patch
 
 # Error that would be raised when we try connecting to DB when DB is not ready.
-from psycopg2 import OperationalError as Psycopg2Error
+from psycopg2 import OperationalError as Psycopg2OpError
 
 # Django helper f-n that allows to call command by the name. It will allow to \
 # call command which we are testing.
@@ -57,13 +57,13 @@ class CommandTests(SimpleTestCase):
         # then mocking lybrary will return exception. If we will pass \
         # Boolean, then it will return Boolean value.
         # Steps:
-        # 1) "[Psycopg2Error] * 2" meaning: First 2 times when we call \
-        # mocked method, we want to raise Psycopg2Error error.
+        # 1) "[Psycopg2OpError] * 2" meaning: First 2 times when we call \
+        # mocked method, we want to raise Psycopg2OpError error.
         #  2) "[OperationalError] * 3" meaning: then we want to raise \
         # 3 OperationalError errors
         #  3) "[True]" meaning: When we call mocked method 6th time, \
         # we got back 'True'.
-        patched_check.side_effect = [Psycopg2Error] * 2 + \
+        patched_check.side_effect = [Psycopg2OpError] * 2 + \
             [OperationalError] * 3 + [True]
 
         call_command('wait_for_db')

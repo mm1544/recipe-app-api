@@ -92,7 +92,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         self._get_or_create_tags(tags, recipe)
 
-        # Need to return the value from 'create' f-n in order for the \
+        # Need to return the value from ' f-n in order for the \
         # rest of funtionality to work.
         return recipe
 

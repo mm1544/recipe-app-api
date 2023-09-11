@@ -61,7 +61,7 @@ class PrivateIngredientsApiTests(TestCase):
         # Creating NOT authenticated user.
         user2 = create_user(email='user2@example.com')
         # Ingredient for NOT auth user.
-        Ingredient.objects.create(user2, name='Salt')
+        Ingredient.objects.create(user=user2, name='Salt')
         # Ingredient assigned to AUTHENTICATED user
         ingredient = Ingredient.objects.create(user=self.user, name='Pepper')
 
