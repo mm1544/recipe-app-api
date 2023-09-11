@@ -21,7 +21,7 @@ from recipe.serializers import (
 )
 
 # Gives a recipe url
-RECIPIES_URL = reverse('recipe:recipe-list')
+RECIPES_URL = reverse('recipe:recipe-list')
 
 
 def detail_url(recipe_id):
@@ -56,14 +56,14 @@ def create_user(**params):
 class PublicRecipeAPITests(TestCase):
     """Test unauthenticated API requests."""
 
-    # Recipies can be retrieved by the User when they are authenticated. Recipies will be not public. Only loged-in users will be allowed to see recipies wich they stored in recipe-book.
+    # Recipes can be retrieved by the User when they are authenticated. Recipes will be not public. Only loged-in users will be allowed to see recipes wich they stored in recipe-book.
 
     def setUp(self):
         self.client = APIClient()
 
     def test_auth_required(self):
         """Test auth is required to call API."""
-        res = self.client.get(RECIPIES_URL)
+        res = self.client.get(RECIPES_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -81,10 +81,10 @@ class PrivateRecipeApiTests(TestCase):
         create_recipe(user=self.user)
         create_recipe(user=self.user)
 
-        # It should return the recipies, for certain user, that we have on the system.
-        res = self.client.get(RECIPIES_URL)
+        # It should return the recipes, for certain user, that we have on the system.
+        res = self.client.get(RECIPES_URL)
 
-        # Recipies in reverse order
+        # Recipes in reverse order
         recipes = Recipe.objects.all().order_by('-id')
         # We expect 'res' to match whatever 'serializer' returns.
         serializer = RecipeSerializer(recipes, many=True)
@@ -102,7 +102,7 @@ class PrivateRecipeApiTests(TestCase):
         # Recipe for the authenticated user, created in 'setUp' method.
         create_recipe(user=self.user)
 
-        res = self.client.get(RECIPIES_URL)
+        res = self.client.get(RECIPES_URL)
 
         # Filter recipes just from the authenticated user
         recipes = Recipe.objects.filter(user=self.user)
@@ -135,7 +135,7 @@ class PrivateRecipeApiTests(TestCase):
             'time_minutes': 30,
             'price': Decimal('5.99'),
         }
-        res = self.client.post(RECIPIES_URL, payload)  # /api/recipies/recipe
+        res = self.client.post(RECIPES_URL, payload)  # /api/recipes/recipe
 
         # 201 - created HTTP responce code.
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -245,7 +245,7 @@ class PrivateRecipeApiTests(TestCase):
         }
 
         # "format='json'" to make converion to JSON.
-        res = self.client.post(RECIPIES_URL, payload, format='json')
+        res = self.client.post(RECIPES_URL, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         recipes = Recipe.objects.filter(user=self.user)
         self.assertEqual(recipes.count(), 1)
@@ -273,7 +273,7 @@ class PrivateRecipeApiTests(TestCase):
             # point it doesn't exist.
             'tags': [{'name': 'Indian'}, {'name': 'Breakfast'}],
         }
-        res = self.client.post(RECIPIES_URL, payload, format='json')
+        res = self.client.post(RECIPES_URL, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         recipes = Recipe.objects.filter(user=self.user)
@@ -281,7 +281,7 @@ class PrivateRecipeApiTests(TestCase):
         recipe = recipes[0]
         # There should be 2 tags associated with that recipe.
         self.assertEqual(recipe.tags.count(), 2)
-        # Checking if specific tag is IN the assigned recipies.
+        # Checking if specific tag is IN the assigned recipes.
         self.assertIn(tag_indian, recipe.tags.all())
         for tag in payload['tags']:
             exists = recipe.tags.filter(

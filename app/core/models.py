@@ -54,7 +54,7 @@ class Recipe(models.Model):
         settings.AUTH_USER_MODEL,
         # If related onj is deleted, we are going to \
         # cascade this change to this model. So if we \
-        # have a user with a multiple recipies, and that \
+        # have a user with a multiple recipes, and that \
         # user removes its profile, then it is going to \
         # delete all(!) the Recipes asociated to the user.
         on_delete=models.CASCADE,
@@ -90,7 +90,7 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    """Ingredient for recipies."""
+    """Ingredient for recipes."""
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
