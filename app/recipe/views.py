@@ -104,8 +104,12 @@ class TagViewSet(mixins.DestroyModelMixin,
         return self.queryset.filter(user=self.request.user).order_by('-name')
 
 
-class IngredientViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class IngredientViewSet(mixins.UpdateModelMixin,
+                        mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
     """Manage ingredients in the database."""
+    # 'mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet' \
+    # - inherited base classes.
     serializer_class = serializers.IngredientSerializer
     # Sets queryset to the Ingredient objects. It tells Dj what models we \
     # want to be manageble throught the  viewset.
