@@ -51,10 +51,14 @@ class RecipeSerializer(serializers.ModelSerializer):
     # By default nested serialyzers are readonly(!!) therefore we \
     # will be using custom code to change this behaviour.
     tags = TagSerializer(many=True, required=False)
+    ingredients = IngredientSerializer(many=True, required=False)
 
     class Meta:
         model = Recipe
-        fields = ['id', 'title', 'time_minutes', 'price', 'link', 'tags']
+        fields = [
+            'id', 'title', 'time_minutes', 'price', 'link', 'tags',
+            'ingredients',
+        ]
         # Because we don't want user to be able to change DB \
         # id of a recipe.
         read_only_fileds = ['id']
@@ -64,7 +68,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         # Because we are doing it in serializer and not the view, we \
         # need to use self.context. The context is passed TO the \
         # serializer BY the view, when you are using serializer for \
-        # that particular view.
+        # that particular view(!!).
         auth_user = self.context['request'].user
 
         # Looping through all the tags that we have pop'ed from \
@@ -77,13 +81,32 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
             recipe.tags.add(tag_obj)
 
-    # Overwriting 'create' method
+    def _get_or_create_ingredients(self, ingredients, recipe):
+        """Handle getting or creating ingredients as needed."""
+
+        # '_' -> internal (or private) method sign. We intend this method to be \
+        # internal. Meaning: we don't expect anyone using this \
+        # serializer, to make calls to this method directly. It should \
+        # only be used by other methods INSIDE of this \
+        # (RecipeSerializer) serializer.
+
+        auth_user = self.context['request'].user
+        for ingredient in ingredients:
+            ingredient_obj, create = Ingredient.objects.get_or_create(
+                user=auth_user,
+                **ingredient,
+            )
+            recipe.ingredients.add(ingredient_obj)
+
     def create(self, validated_data):
         """Create a recipe."""
+        # Overwriting 'create' method
+
         # Meaning: If 'tags' exist in 'validated_data', remove 'tags' \
         # from validated data and assign it to the variable. If 'tags' \
         # doesn' exist it will defoult to '[]'
         tags = validated_data.pop('tags', [])
+        ingredients = validated_data.pop('ingredients', [])
         # We have removed 'tags' from 'validated_data' before creating \
         # recipe
         # Tags are expected to be created separately and added as a \
@@ -91,6 +114,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
 
         self._get_or_create_tags(tags, recipe)
+        self._get_or_create_ingredients(ingredients, recipe)
 
         # Need to return the value from ' f-n in order for the \
         # rest of funtionality to work.
