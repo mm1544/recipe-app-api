@@ -126,6 +126,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         # 'validated_data' is data that we want 'instance' to be updated with.
 
         tags = validated_data.pop('tags', None)
+        # Removing ingredients from validated_data
+        ingredients = validated_data.pop('ingredients', None)
 
         if tags is not None:
             # Clears all the existing assigned tags, because we are updating \
@@ -134,6 +136,14 @@ class RecipeSerializer(serializers.ModelSerializer):
             self._get_or_create_tags(tags, instance)
             # If tags are not provided in 'validated_data', then there is no \
             # need to update them on instance.
+
+        if ingredients is not None:
+            # If we would use 'if ingredients:', then this condition will not \
+            # be satisfied for 1)'None', 2) '' (empty str), \
+            # 3) '[]' (empty list)(!!!)
+            # We want to clear the 'ingredients' when list is empty.
+            instance.ingredients.clear()
+            self._get_or_create_ingredients(ingredients, instance)
 
         for attr, value in validated_data.items():
             # For the rest of the 'validated_data'. Everything will be assigned \
