@@ -80,18 +80,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class TagViewSet(mixins.DestroyModelMixin,
-                 mixins.UpdateModelMixin,
-                 mixins.ListModelMixin,
-                 viewsets.GenericViewSet):
-    # 'ListModelMixin' allows adding listing functionality \
-    # for listing models.
-    # 'viewsets' allows to use CRUD functionality out of the box.
-    # 'GenericViewSet' allows throwing mixsins, so that you can have a mixin functionality that you desire for your particular API.
-    """Manage tags in the database."""
-    serializer_class = serializers.TagSerializer
-    queryset = Tag.objects.all()
+class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
+                            mixins.UpdateModelMixin,
+                            mixins.ListModelMixin,
+                            viewsets.GenericViewSet):
+    """Base viewset for recipe attributes."""
+    # 'base' - because will use it as base class for other viewsets.
+    # 'RecipeAttr' - 'mixins.DestroyModelMixin' and etc. are Recipe \
+    # attributes
+
+    # Adds support for using token authentication.
     authentication_classes = [TokenAuthentication]
+    # Meaning: All users should be authenticated to use this endpoint.
     permission_classes = [IsAuthenticated]
 
     # Need to overwrite get_queryset method (coms with viewset), \
@@ -104,10 +104,17 @@ class TagViewSet(mixins.DestroyModelMixin,
         return self.queryset.filter(user=self.request.user).order_by('-name')
 
 
-class IngredientViewSet(mixins.DestroyModelMixin,
-                        mixins.UpdateModelMixin,
-                        mixins.ListModelMixin,
-                        viewsets.GenericViewSet):
+class TagViewSet(BaseRecipeAttrViewSet):
+    # 'ListModelMixin' allows adding listing functionality \
+    # for listing models.
+    # 'viewsets' allows to use CRUD functionality out of the box.
+    # 'GenericViewSet' allows throwing mixsins, so that you can have a mixin functionality that you desire for your particular API.
+    """Manage tags in the database."""
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+
+
+class IngredientViewSet(BaseRecipeAttrViewSet):
     """Manage ingredients in the database."""
     # 'mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet' \
     # - inherited base classes.
@@ -115,13 +122,4 @@ class IngredientViewSet(mixins.DestroyModelMixin,
     # Sets queryset to the Ingredient objects. It tells Dj what models we \
     # want to be manageble throught the  viewset.
     queryset = Ingredient.objects.all()
-    # Adds support for using token authentication.
-    authentication_classes = [TokenAuthentication]
-    # Meaning: All users should be authenticated to use this endpoint.
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        """Filter queryset to authenticated user."""
-        return self.queryset.filter(user=self.request.user).order_by('-name')
-
     # Now will hook this viewset to the URL.
