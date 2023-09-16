@@ -7,8 +7,11 @@ from rest_framework import (
     # Thing which can be mixed in into view to add \
     # aditional functionality.
     mixins,
+    status,
 )
 
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 # That is the permission that we want to check before users \
 # can use recipe endpoint.
@@ -63,6 +66,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             # NOT adding here '()' because we want to return a reference \
             # to the class, but not the obj of a class.
             return serializers.RecipeSerializer
+        elif self.action == 'upload_image':
+            # 'upload_image' is a custom action that we will define in \
+            # recipeviewset. 'actions' is the way you can add aditional \
+            # functionality on top of the viewset default functionality. 'ModelViewSet' provides multiple default actions (refere to decumentation) - E.g. 'list', 'delete', 'update'. We will add a custom action 'upload_image'. We need to get a special serializer for calling this action.
+            return serializers.RecipeImageSerializer
 
         return self.serializer_class
 
@@ -78,6 +86,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # And will set 'user' to the current authenticated user, when we \
         # save the object.
         serializer.save(user=self.request.user)
+
+    @action(methods=['POST'], detail=True, url_path='upload-image')
+    def upload_image(self, request, pk=None):
+        """Upload an image to recipe."""
+        # Adding custom action.
+        # 'detail=True' meaning: there is a specific id of recipe. Non-detail \
+        # veiw is just a list-view, that has a generic list of all the \
+        # recipies.
+        # We ant to apply this custom action just to detail endpoint (specific \
+        # recipe must be provided).
+        # 'url_path='upload-image'' - lets us specify a custom url path for our \
+        # action.
+        recipe = self.get_object()
+        # Passing in the data that was posted
+        serializer = self.get_serializer(recipe, data=request.data)
+
+        if serializer.is_valid():
+            # Will save the imahe to the database.
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # Executed when serializer is not valid and we return errors.
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
