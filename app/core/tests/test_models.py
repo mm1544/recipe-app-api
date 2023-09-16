@@ -1,6 +1,8 @@
 """
 Tests for models.
 """
+# To mock 'patch' request(?)
+from unittest.mock import patch
 # To store one of the values of Recipe object
 from decimal import Decimal
 
@@ -105,3 +107,27 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(ingredient), ingredient.name)
+
+    @patch('core.models.uuid.uuid4')  # Decoreator to patch uuid \
+    # function that is going to be imported in to our models. Reason \
+    # to do it is to replace the behaviour of this uuid. uuid generaly \
+    # generates randome string (unique identifier), but, for our test,we \
+    # dont want to create ral unique identifier because it is hard to \
+    # determin what unique identifier was created.
+    def test_recipe_file_name_uuid(self, mock_uuid):
+        """Test generating image path."""
+        # Testing generation of a path to the file on the system.
+        # Will be using uuid as a unique identifire for the file \
+        # that we aregoing to be uploading. Reason for that is to \
+        # ensure an unique name for each file that we are going to \
+        # be uploding.
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        # This f-n will be created. It generates the path to the file \
+        # that is being uploaded. Passing 'None' which replaces the \
+        # instance (passed to this f-n by Django image field.). Then \
+        # we are passing the original name when the file is being uploaded.
+        file_path = models.recipe_image_file_path(None, 'example.jpg')
+
+        # File name 'example' should be replaced with uuid.
+        self.assertEqual(file_path, f'uploads/recipe/{uuid}.jpg')

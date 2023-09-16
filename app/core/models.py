@@ -1,6 +1,9 @@
 """
 Database models.
 """
+import uuid
+import os
+
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
@@ -8,6 +11,26 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
+
+
+def recipe_image_file_path(instance, filename):
+    """Generate file path for new recipe image."""
+    # Function that generates the path to the image that \
+    # user uploads.
+    # 'instance' is the instance of the object, the image \
+    # is being uploaded to.
+    # 'filename' - name of the original file that is being \
+    # uploaded.
+    ext = os.path.splitext(filename)[1]
+    # Creating custom filename and appending extension to \
+    # the end.
+    filename = f'{uuid.uuid4()}{ext}'
+
+    # This ensures that the string is created in the \
+    # apropriate format for the operating system that we \
+    # arre using. Urls would be different for windows, linux or \
+    # mac etc.
+    return os.path.join('uploads', 'recipe', filename)
 
 
 class UserManager(BaseUserManager):
@@ -68,6 +91,9 @@ class Recipe(models.Model):
     # recipes that can have many diferent tags.
     tags = models.ManyToManyField('Tag')
     ingredients = models.ManyToManyField('Ingredient')
+    # 'recipe_image_file_path' is a reference to the f-n that \
+    # generates the filepath. That is Django way to do it.
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
 
     def __str__(self):
         # It defines how object should be displayed in Dj Admin.
