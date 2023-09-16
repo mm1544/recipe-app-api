@@ -163,7 +163,7 @@ class RecipeDetailSerializer(RecipeSerializer):
         # Using Meta class inside of class RecipeSerializer
 
         # Adding additional field
-        fields = RecipeSerializer.Meta.fields + ['description']
+        fields = RecipeSerializer.Meta.fields + ['description', 'image']
 
 
 class RecipeImageSerializer(serializers.ModelSerializer):
