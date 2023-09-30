@@ -141,10 +141,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # 'detail=True' meaning: there is a specific id of recipe. Non-detail \
         # veiw is just a list-view, that has a generic list of all the \
         # recipies.
-        # We ant to apply this custom action just to detail endpoint (specific \
-        # recipe must be provided).
-        # 'url_path='upload-image'' - lets us specify a custom url path for our \
-        # action.
+        # We ant to apply this custom action just to detail endpoint \
+        # (specific recipe must be provided).
+        # 'url_path='upload-image'' - lets us specify a custom url \
+        # path for our action.
         recipe = self.get_object()
         # Passing in the data that was posted
         serializer = self.get_serializer(recipe, data=request.data)
@@ -159,7 +159,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    # Updating automated documentation for list method for both views that are inheriting from this BaseRecipeAttrViewSet.
+    # Updating automated documentation for list method for both \
+    # views that are inheriting from this BaseRecipeAttrViewSet.
     list=extend_schema(
         parameters=[
             OpenApiParameter(
@@ -215,7 +216,9 @@ class TagViewSet(BaseRecipeAttrViewSet):
     # 'ListModelMixin' allows adding listing functionality \
     # for listing models.
     # 'viewsets' allows to use CRUD functionality out of the box.
-    # 'GenericViewSet' allows throwing mixsins, so that you can have a mixin functionality that you desire for your particular API.
+    # 'GenericViewSet' allows throwing mixsins, so that you can \
+    # have a mixin functionality that you desire for your \
+    # particular API.
     """Manage tags in the database."""
     serializer_class = serializers.TagSerializer
     queryset = Tag.objects.all()
@@ -223,10 +226,11 @@ class TagViewSet(BaseRecipeAttrViewSet):
 
 class IngredientViewSet(BaseRecipeAttrViewSet):
     """Manage ingredients in the database."""
-    # 'mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet' \
-    # - inherited base classes.
+    # 'mixins.UpdateModelMixin, mixins.ListModelMixin, \
+    # viewsets.GenericViewSet' - inherited base classes.
     serializer_class = serializers.IngredientSerializer
-    # Sets queryset to the Ingredient objects. It tells Dj what models we \
-    # want to be manageble throught the  viewset.
+    # Sets queryset to the Ingredient objects. It tells Dj \
+    # what models we want to be manageble throught the \
+    # viewset.
     queryset = Ingredient.objects.all()
     # Now will hook this viewset to the URL.

@@ -97,7 +97,8 @@ class PrivateRecipeApiTests(TestCase):
         create_recipe(user=self.user)
         create_recipe(user=self.user)
 
-        # It should return the recipes, for certain user, that we have on the system.
+        # It should return the recipes, for certain user, that we \
+        # have on the system.
         res = self.client.get(RECIPES_URL)
 
         # Recipes in reverse order
@@ -159,8 +160,8 @@ class PrivateRecipeApiTests(TestCase):
         # It will iterate trough payload and 'k' will be key, and 'v' will \
         # be value.
         for k, v in payload.items():
-            # 'getattr'(!) - Python f-n. It allows to get an attribute without using \
-            # 'dot' notation(!!!).
+            # 'getattr'(!) - Python f-n. It allows to get an \
+            # attribute without using 'dot' notation(!!!).
             self.assertEqual(getattr(recipe, k), v)
         self.assertEqual(recipe.user, self.user)
 
