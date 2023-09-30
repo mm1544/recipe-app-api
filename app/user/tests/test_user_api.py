@@ -10,7 +10,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
-### Setting URLs that we are going to test ###
+#   Setting URLs that we are going to test ###
 # API url that we will be testing
 # 'user' as an app and 'create' is an endpoint
 # Will return a full URL path inside our project.
@@ -142,7 +142,8 @@ class PublicUserApiTests(TestCase):
         res = self.client.get(ME_URL)
 
         # Here we make unauthenticated http request to 'me' endpoint.
-        # You are not Authorised to use endpoint if you are not authenticated (!!)
+        # You are not Authorised to use endpoint if you are not \
+        # authenticated (!!)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 

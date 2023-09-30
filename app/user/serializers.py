@@ -10,7 +10,8 @@ Serializers for the user API view.
 
 from django.contrib.auth import (
     get_user_model,
-    # F-n comes with Django that allows to authenticate with authentication system.
+    # F-n comes with Django that allows to authenticate \
+    # with authentication system.
     authenticate
 )
 from django.utils.translation import gettext as _
@@ -79,7 +80,8 @@ class AuthTokenSerializer(serializers.Serializer):
         """Validate and authenticate the user."""
         # 'attrs' -> atributes
         # Validate method is called on the Serializer on \
-        # the validation stage, when it goes to validate the input to the serializer.
+        # the validation stage, when it goes to validate the \
+        # input to the serializer.
         email = attrs.get('email')
         password = attrs.get('password')
         user = authenticate(

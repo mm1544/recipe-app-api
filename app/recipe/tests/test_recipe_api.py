@@ -69,7 +69,10 @@ def create_user(**params):
 class PublicRecipeAPITests(TestCase):
     """Test unauthenticated API requests."""
 
-    # Recipes can be retrieved by the User when they are authenticated. Recipes will be not public. Only loged-in users will be allowed to see recipes wich they stored in recipe-book.
+    # Recipes can be retrieved by the User when they are \
+    # authenticated. Recipes will be not public. Only loged-in \
+    # users will be allowed to see recipes wich they stored in \
+    # recipe-book.
 
     def setUp(self):
         self.client = APIClient()

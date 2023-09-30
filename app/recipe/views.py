@@ -112,7 +112,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         elif self.action == 'upload_image':
             # 'upload_image' is a custom action that we will define in \
             # recipeviewset. 'actions' is the way you can add aditional \
-            # functionality on top of the viewset default functionality. 'ModelViewSet' provides multiple default actions (refere to decumentation) - E.g. 'list', 'delete', 'update'. We will add a custom action 'upload_image'. We need to get a special serializer for calling this action.
+            # functionality on top of the viewset default functionality \
+            # 'ModelViewSet' provides multiple default actions (refere \
+            # to decumentation) - E.g. 'list', 'delete', 'update'. We \
+            #  will add a custom action 'upload_image'. We need to get \
+            # a special serializer for calling this action.
             return serializers.RecipeImageSerializer
 
         return self.serializer_class

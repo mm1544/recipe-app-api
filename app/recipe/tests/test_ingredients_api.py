@@ -57,9 +57,10 @@ class PrivateIngredientsApiTests(TestCase):
 
         res = self.client.get(INGREDIENTS_URL)
 
-        # NOTE:We will retrieve a list of all the ingredients in the database, \
-        # then pass it to the serializer(!!), and then will use the result \
-        # (from serializer) to validate that API is returning corect result.
+        # NOTE:We will retrieve a list of all the ingredients in the \
+        #  database, then pass it to the serializer(!!), and then \
+        # will use the result (from serializer) to validate that \
+        # API is returning corect result.
 
         ingredients = Ingredient.objects.all().order_by('-name')
         serializer = IngredientSerializer(ingredients, many=True)

@@ -84,7 +84,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     def _get_or_create_ingredients(self, ingredients, recipe):
         """Handle getting or creating ingredients as needed."""
 
-        # '_' -> internal (or private) method sign. We intend this method to be \
+        # '_' -> internal (or private) method sign. We intend this \
+        #  method to be \
         # internal. Meaning: we don't expect anyone using this \
         # serializer, to make calls to this method directly. It should \
         # only be used by other methods INSIDE of this \
@@ -146,8 +147,8 @@ class RecipeSerializer(serializers.ModelSerializer):
             self._get_or_create_ingredients(ingredients, instance)
 
         for attr, value in validated_data.items():
-            # For the rest of the 'validated_data'. Everything will be assigned \
-            # to the instance.
+            # For the rest of the 'validated_data'. Everything will \
+            # be assigned to the instance.
             setattr(instance, attr, value)
 
         instance.save()

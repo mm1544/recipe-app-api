@@ -94,7 +94,8 @@ class ModelTests(TestCase):
         tag = models.Tag.objects.create(user=user, name='Tag1')
 
         # Testing 2 things:
-        # 1)Checking corect string representation setup for the model instances.
+        # 1)Checking corect string representation setup for the \
+        # model instances.
         # 2)If we can create new Tag instances.
         self.assertEqual(str(tag), tag.name)
 

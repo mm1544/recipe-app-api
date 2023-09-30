@@ -30,8 +30,8 @@ router.register('ingredients', views.IngredientViewSet)
 app_name = 'recipe'
 
 urlpatterns = [
-    # Used to include URLs that are generated automatically by the router (all URLs \
-    # that are available).
+    # Used to include URLs that are generated automatically by \
+    # the router (all URLs that are available).
     path('', include(router.urls)),
     # Need to wire this up in the main urls.
 ]
