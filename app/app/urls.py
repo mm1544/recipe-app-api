@@ -22,8 +22,12 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+from core import views as core_views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Adding URL here because it is JUST A TEST!!
+    path('api/healt-check/', core_views.health_check, name='health-check'),
     # SpectacularAPIView will generate the schema file \
     # needed for our project.
     path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
